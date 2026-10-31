@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: sawt-cleaner
+    runtime: docker
+    plan: starter
+    healthCheckPath: /
+    envVars:
+      - key: MAX_UPLOAD_GB
+        value: "20"

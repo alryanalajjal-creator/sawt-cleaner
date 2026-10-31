@@ -1,0 +1,10 @@
+services:
+  sawt-cleaner:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      MAX_UPLOAD_GB: "20"
+    volumes:
+      - ./work:/app/work
+    restart: unless-stopped
