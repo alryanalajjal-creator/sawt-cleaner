@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>صوت | إزالة الموسيقى من الفيديو</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--card:#141c31;--line:#26334f;--text:#f4f7ff;--muted:#a8b4cc;--accent:#8b7cff;--green:#3dd6a0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#252451 0,transparent 50%),var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;min-height:100vh}
+main{width:min(820px,92%);margin:54px auto}.brand{font-size:14px;color:#bcb6ff;letter-spacing:2px;font-weight:bold}
+h1{font-size:clamp(30px,6vw,48px);margin:14px 0 10px}.sub{color:var(--muted);line-height:1.9;margin:0 0 28px}
+.card{background:linear-gradient(145deg,#18223a,#11192b);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 25px 80px #0005}
+.drop{border:2px dashed #53618a;border-radius:18px;padding:42px 20px;text-align:center;background:#0c1426;cursor:pointer;transition:.2s}
+.drop.over{border-color:var(--accent);background:#171832}.icon{font-size:42px}.drop strong{display:block;font-size:19px;margin:12px 0}.drop span{color:var(--muted);font-size:13px}
+input{display:none}.file{margin-top:16px;color:#d8dded;font-size:14px;overflow-wrap:anywhere}
+button,.download{border:0;border-radius:13px;padding:15px 22px;background:var(--accent);color:white;font-size:16px;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}
+button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.note{font-size:12px;color:var(--muted);line-height:1.8;margin-top:20px}.status{margin-top:24px;display:none}.status h3{margin:0 0 10px}.track{height:10px;background:#29344d;border-radius:99px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,#8b7cff,#3dd6a0);transition:width .4s}.statusline{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:13px;margin:10px 0}
+.error{color:#ff9b9b;white-space:pre-wrap;font-size:13px}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.feature{border:1px solid var(--line);border-radius:14px;padding:14px;color:var(--muted);font-size:12px;line-height:1.7}.feature b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}
+footer{text-align:center;color:#73809c;font-size:12px;margin:25px 0}
+@media(max-width:600px){main{margin:28px auto}.card{padding:18px}.features{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<div class="brand">SAWT / صوت</div>
+<h1>نقّي الفيديو من الموسيقى.</h1>
+<p class="sub">ارفع الفيديو، ودع الذكاء الاصطناعي يفصل الموسيقى عن الصوت البشري، ثم نزّل نسخة جديدة مع الاحتفاظ بمسار الصورة الأصلي.</p>
+<section class="card">
+  <div class="drop" id="drop">
+    <div class="icon">🎬</div><strong>اسحب الفيديو إلى هنا</strong>
+    <span>أو اضغط لاختيار ملف من جهازك · MP4 / MOV / MKV / WEBM / AVI</span>
+    <input id="file" type="file" accept="video/*">
+    <div class="file" id="filename">لم يتم اختيار ملف</div>
+  </div>
+  <div class="actions"><button id="start" disabled>إزالة الموسيقى من الملف</button><span id="size" class="note"></span></div>
+  <div style="height:1px;background:#26334f;margin:25px 0"></div>
+  <label for="videoUrl" style="display:block;font-weight:bold;margin-bottom:10px">أو أزل الموسيقى عن طريق رابط فيديو مباشر</label>
+  <input id="videoUrl" type="url" placeholder="https://example.com/video.mp4"
+    style="display:block;width:100%;padding:15px;border-radius:12px;border:1px solid #53618a;background:#0c1426;color:#fff;font-size:14px">
+  <div class="actions"><button id="urlStart">معالجة الرابط</button></div>
+  <p class="note">يدعم روابط فيديو YouTube العامة، إضافةً إلى الروابط المباشرة لملفات الفيديو. لا يدعم قوائم التشغيل أو الفيديوهات الخاصة/المقيّدة أو روابط TikTok. استخدم المحتوى الذي تملك حق تنزيله ومعالجته.</p>
+  <div class="status" id="status">
+    <h3 id="heading">جارٍ تجهيز الفيديو…</h3>
+    <div class="track"><div class="bar" id="bar"></div></div>
+    <div class="statusline"><span id="message">يتم رفع الملف…</span><b id="percent">0%</b></div>
+    <div id="result"></div><div class="error" id="error"></div>
+  </div>
+  <p class="note">ملاحظة: فصل الصوت بالذكاء الاصطناعي قد لا يكون مثالياً في كل المقاطع، خصوصاً عند تداخل الموسيقى مع الكلام. يحتفظ التطبيق بمسار الفيديو دون إعادة ترميزه، ويعيد ترميز الصوت بجودة AAC 320 kbps. تتم المعالجة على الخادم الذي تشغّل عليه التطبيق.</p>
+</section>
+<div class="features">
+ <div class="feature"><b>🎙️ الحفاظ على الكلام</b>استخراج مسار الأصوات البشرية باستخدام نموذج فصل صوتي.</div>
+ <div class="feature"><b>📽️ الفيديو الأصلي</b>نسخ مسار الصورة دون ضغط أو إعادة ترميز.</div>
+ <div class="feature"><b>⏱️ المقاطع الطويلة</b>المعالجة على الخادم لتجنّب حدود ذاكرة المتصفح.</div>
+</div>
+<footer>صوت — أداة معالجة صوتية تعمل على خادمك الخاص</footer>
+</main>
+<script>
+const input=document.getElementById('file'),drop=document.getElementById('drop'),start=document.getElementById('start');
+const urlStart=document.getElementById('urlStart'), videoUrl=document.getElementById('videoUrl');
+let chosen=null,poll=null;
+function select(f){if(!f)return;chosen=f;document.getElementById('filename').textContent=f.name;document.getElementById('size').textContent=(f.size/1024/1024).toFixed(1)+' MB';start.disabled=false;}
+drop.onclick=()=>input.click();input.onchange=()=>select(input.files[0]);
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('over')};drop.ondragleave=()=>drop.classList.remove('over');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');select(e.dataTransfer.files[0])};
+function progress(n,msg){document.getElementById('bar').style.width=n+'%';document.getElementById('percent').textContent=n+'%';document.getElementById('message').textContent=msg}
+function showStatus(){document.getElementById('status').style.display='block';document.getElementById('result').innerHTML='';document.getElementById('error').textContent='';document.getElementById('heading').textContent='جارٍ تجهيز الفيديو…'}
+function monitor(id){progress(4,'تم استلام المهمة…');poll=setInterval(()=>watch(id).catch(e=>{document.getElementById('error').textContent='انقطع الاتصال بالخادم أثناء متابعة المهمة: '+e.message;}),3000);watch(id);}
+urlStart.onclick=async()=>{
+ const url=videoUrl.value.trim(); if(!url){document.getElementById('error').textContent='أدخل رابط الفيديو أولاً.';showStatus();return;}
+ urlStart.disabled=true;start.disabled=true;showStatus();progress(3,'جارٍ تنزيل الفيديو من الرابط…');
+ try{
+   const response=await fetch('/api/jobs/url',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+   const data=await response.json(); if(!response.ok)throw new Error(data.detail||'تعذّر استخدام الرابط.');
+   monitor(data.job_id);
+ }catch(e){document.getElementById('heading').textContent='تعذّرت معالجة الرابط';document.getElementById('error').textContent=e.message;}
+ finally{urlStart.disabled=false;start.disabled=!chosen;}
+};
+async function watch(id){
+ const r=await fetch('/api/jobs/'+id);if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();
+ progress(j.progress||0,j.message||'جارٍ العمل…');
+ if(j.status==='done'){clearInterval(poll);start.disabled=!chosen;urlStart.disabled=false;document.getElementById('heading').textContent='اكتملت المعالجة 🎉';document.getElementById('result').innerHTML='<a class="download" href="/api/jobs/'+id+'/download">تنزيل الفيديو المنظّف</a>';}
+ if(j.status==='error'){clearInterval(poll);start.disabled=!chosen;urlStart.disabled=false;document.getElementById('heading').textContent='حدث خطأ';document.getElementById('error').textContent=j.error||j.message;}
+}
+start.onclick=()=>{
+ if(!chosen)return;start.disabled=true;document.getElementById('status').style.display='block';
+ document.getElementById('result').innerHTML='';document.getElementById('error').textContent='';
+ const form=new FormData();form.append('file',chosen);
+ const xhr=new XMLHttpRequest();xhr.open('POST','/api/jobs');
+ xhr.upload.onprogress=e=>{if(e.lengthComputable)progress(Math.round(e.loaded/e.total*12),'رفع الفيديو إلى الخادم…');};
+ xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300){const id=JSON.parse(xhr.responseText).job_id;monitor(id);}else{document.getElementById('heading').textContent='تعذّر رفع الملف';document.getElementById('error').textContent=xhr.responseText;start.disabled=false;}};
+ xhr.onerror=()=>{document.getElementById('error').textContent='فشل الاتصال بالخادم.';start.disabled=false;};xhr.send(form);
+};
+</script></body></html>
